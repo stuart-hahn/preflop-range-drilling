@@ -154,7 +154,13 @@ export function buildScenarioPool(level) {
 
   // SB RFI (separate type for limp alias handling)
   if (level >= DIFFICULTY.INTERMEDIATE) {
+    // At Intermediate, limp hands can't be drilled correctly (no limp action in scope).
+    // Exclude them; they enter at Advanced when limp becomes valid.
+    const sbLimpOnly = level < DIFFICULTY.ADVANCED
+      ? new Set(RANGES_100BB_6MAX.SB.call || [])
+      : new Set();
     for (const hand of ALL_HANDS) {
+      if (sbLimpOnly.has(hand)) continue;
       pool.push({ position: 'SB', hand, scenarioType: 'rfi_sb', context: null });
     }
   }
@@ -269,6 +275,37 @@ export function computeNextState(state, isCorrect, position, hand) {
   };
 }
 
+// ── UI helpers (exported for components) ─────────────────────────────────────
+
+export function getSituationText(scenario) {
+  const { scenarioType, context } = scenario;
+  if (scenarioType === 'vs_open') return `${context.opener} opened`;
+  if (scenarioType === 'vs_3bet') return `You opened · ${context.threebettor} 3-bet`;
+  if (scenarioType === 'vs_sb_limp') return 'SB limped';
+  return null;
+}
+
+export function getActionButtons(scenario, level) {
+  const { scenarioType, position, context } = scenario;
+  switch (scenarioType) {
+    case 'rfi':
+      return ['open', 'fold'];
+    case 'rfi_sb':
+      return level >= DIFFICULTY.ADVANCED ? ['open', 'limp', 'fold'] : ['open', 'fold'];
+    case 'vs_open': {
+      const canCall = Boolean(CAN_CALL_VS_OPEN[position]?.includes(context?.opener));
+      if (level >= DIFFICULTY.EXPERT) return canCall ? ['3bet', 'call', 'fold'] : ['3bet', 'fold'];
+      return ['call', 'fold'];
+    }
+    case 'vs_3bet':
+      return ['4bet', 'call', 'fold'];
+    case 'vs_sb_limp':
+      return ['raise', 'check'];
+    default:
+      return ['fold'];
+  }
+}
+
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
 export default function useAdaptive() {
@@ -302,6 +339,13 @@ export default function useAdaptive() {
     return { isCorrect, correctAction, parsed };
   }
 
+  function recordTimedOut() {
+    const correctAction = getCorrectAction(scenario, state.difficulty);
+    const patch = computeNextState(state, false, scenario.position, scenario.hand);
+    update(patch);
+    return { correctAction };
+  }
+
   return {
     scenario,
     level: state.difficulty,
@@ -311,6 +355,7 @@ export default function useAdaptive() {
     timerBase: state.timerBase,
     hintEnabled: state.hintEnabled,
     submitAnswer,
+    recordTimedOut,
     nextScenario,
     update,
     reset,

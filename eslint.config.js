@@ -16,6 +16,10 @@ export default [
         document: 'readonly',
         console: 'readonly',
         localStorage: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
       },
       parserOptions: {
         ecmaFeatures: { jsx: true },
