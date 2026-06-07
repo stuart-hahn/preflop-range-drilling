@@ -15,6 +15,7 @@ export default [
         window: 'readonly',
         document: 'readonly',
         console: 'readonly',
+        localStorage: 'readonly',
       },
       parserOptions: {
         ecmaFeatures: { jsx: true },
