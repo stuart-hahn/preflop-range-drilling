@@ -1,21 +1,7 @@
 import { useState } from 'react';
 import Drill from './components/Drill.jsx';
-
-function PlaceholderScreen({ title, onBack }) {
-  return (
-    <div className="w-full max-w-sm flex flex-col gap-4">
-      <button
-        onClick={onBack}
-        className="self-start text-sm text-slate-400 hover:text-slate-200 transition-colors"
-      >
-        ← Back
-      </button>
-      <div className="bg-slate-800 rounded-2xl p-6 text-center text-slate-500">
-        {title} — coming soon
-      </div>
-    </div>
-  );
-}
+import Stats from './components/Stats.jsx';
+import Settings from './components/Settings.jsx';
 
 export default function App() {
   const [screen, setScreen] = useState('drill');
@@ -44,8 +30,8 @@ export default function App() {
       )}
 
       {screen === 'drill' && <Drill />}
-      {screen === 'stats' && <PlaceholderScreen title="Stats" onBack={showDrill} />}
-      {screen === 'settings' && <PlaceholderScreen title="Settings" onBack={showDrill} />}
+      {screen === 'stats' && <Stats onBack={showDrill} />}
+      {screen === 'settings' && <Settings onBack={showDrill} />}
     </div>
   );
 }
