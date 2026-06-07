@@ -43,3 +43,25 @@ export const SUIT_COLORS = {
   diamonds: 'text-blue-400',
   clubs: 'text-green-500',
 };
+
+export const ACTION_LABELS = {
+  open: 'Open',
+  fold: 'Fold',
+  call: 'Call',
+  limp: 'Limp',
+  '3bet': '3-Bet',
+  '4bet': '4-Bet',
+  raise: 'Raise',
+  check: 'Check',
+};
+
+export const ACTION_SHORTCUTS = {
+  open: 'o',
+  fold: 'f',
+  call: 'c',
+  limp: 'l',
+  '3bet': '3',
+  '4bet': '4',
+  raise: 'r',
+  check: 'x',
+};
